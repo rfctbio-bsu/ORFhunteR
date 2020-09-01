@@ -1,0 +1,20 @@
+Package: ORFhunteR
+Type: Package
+biocViews: Technology, StatisticalMethod, Sequencing, RNASeq, Classification, FeatureExtraction
+Title: Predict open reading frames in nucleotide sequences.
+Version: 0.99.0
+Author: Vasily V. Grinev, Mikalai M. Yatskou, Victor V. Skakun
+Maintainer: Vasily V. Grinev, <grinev_vv@bsu.by>
+Description: Provides identification of open reading frames in RNA molecules based on 
+  sequences vectorization and classification.
+License: Artistic-2.0
+Encoding: UTF-8
+LazyData: true
+StagedInstall: no
+Imports: Rcpp (>= 1.0.3), Biostrings, BSgenome.Hsapiens.UCSC.hg38, 
+  Peptides, data.table, stringr, randomForest, rtracklayer, xfun,
+  stats, utils
+LinkingTo: Rcpp
+Suggests: knitr
+VignetteBuilder:  knitr
+RoxygenNote: 7.1.1.9000

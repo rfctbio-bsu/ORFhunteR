@@ -1,0 +1,34 @@
+---
+title: "ORFhunteR vignette"
+author: "Vignette Author"
+date: "`r Sys.Date()`"
+output: pdf_document
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{ORFhunteR vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Description
+
+ORFhunteR package provides identification of open reading frames in RNA molecules based on sequences vectorization and classification.
+
+## Workflow
+
+Quck start
+```{r}
+library(ORFhunteR)
+# path to .fasta file with mRNAs molecules
+f.TrExper_path <- system.file("extdata", "mRNAs_example.fasta", 
+                              package = "ORFhunteR")
+# Predict ORF coordinates for each mRNA
+predictORF(f.TrExper = f.TrExper_path, 
+           genome = "BSgenome.Hsapiens.UCSC.hg38", 
+           d.work = NULL)
+
+```
+
