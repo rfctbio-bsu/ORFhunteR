@@ -158,7 +158,7 @@ SEXP getBaoMetrics (SEXP sequences, SEXP indexes, SEXP types)
     delete tmpStrings[0];
     delete tmpStrings[1];
     delete tmpStrings[2];
-    delete tmpStrings;
+    delete[] tmpStrings;
     delete tmpPartSum;
     delete tmpNumbers;
     delete entropies;

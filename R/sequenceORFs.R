@@ -70,8 +70,7 @@ sequenceORFs <- function(f.orf, f.trans, frt = "fasta", f.seq = NULL,
   }
   ### Extraction of sequences of identified open reading frames.
   seq.orf <- DNAStringSet(x = substr(x = seq.set, start = seq.orf$start, 
-                                     stop = seq.orf$end),
-                         use.names = TRUE)
+                                     stop = seq.orf$end), use.names = TRUE)
   if (!is.null(f.seq)){
     ### Write an XStringSet object to a file.
     writeXStringSet(x = seq.orf, filepath = f.seq)
