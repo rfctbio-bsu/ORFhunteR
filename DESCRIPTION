@@ -3,10 +3,24 @@ Type: Package
 biocViews: Technology, StatisticalMethod, Sequencing, RNASeq, Classification, FeatureExtraction
 Title: Predict open reading frames in nucleotide sequences.
 Version: 0.99.0
-Author: Vasily V. Grinev, Mikalai M. Yatskou, Victor V. Skakun, Maryna Chepeleva, Petr V. Nazarov
-Maintainer: Vasily V. Grinev, <grinev_vv@bsu.by>
-Description: Provides identification of open reading frames in RNA molecules based on 
-  sequences vectorization and classification.
+Authors@R: 
+        c(person(given = "Vasily V.",
+             family = "Grinev",
+             role = c("aut", "cre"),
+             email = "grinev_vv@bsu.by"),
+      person(given = "Mikalai M.",
+             family = "Yatskou",
+             role = "aut"),
+      person(given = "Victor V.",
+             family = "Skakun",
+             role = "aut"),
+      person(given = "Maryna",
+             family = "Chepeleva",
+             role = "aut"),
+      person(given = "Petr V.",
+             family = "Nazarov",
+             role = "aut"))
+Description: The ORFhunteR package is a R and C++ library for an automatic determination and annotation of open reading frames (ORF) in a large set of RNA molecules. It efficiently implements the machine learning model based on vectorization of nucleotide sequences and the random forest classification algorithm. The ORFhunteR package consists of a set of functions written in the R language in conjunction with C++. The efficiency of the package was confirmed by the examples of the analysis of RNA molecules from the NCBI RefSeq and Ensembl databases. The package can be used in basic and applied biomedical research related to the study of the transcriptome of normal as well as altered (for example, cancer) human cells.
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
@@ -15,6 +29,6 @@ Imports: Rcpp (>= 1.0.3), Biostrings, BSgenome.Hsapiens.UCSC.hg38,
   Peptides, data.table, stringr, randomForest, rtracklayer, xfun,
   stats, utils
 LinkingTo: Rcpp
-Suggests: knitr
+Suggests: knitr, BiocStyle, rmarkdown
 VignetteBuilder:  knitr
 RoxygenNote: 7.1.1.9000
