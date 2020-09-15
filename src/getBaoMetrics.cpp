@@ -159,11 +159,11 @@ SEXP getBaoMetrics (SEXP sequences, SEXP indexes, SEXP types)
     delete tmpStrings[1];
     delete tmpStrings[2];
     delete[] tmpStrings;
-    delete tmpPartSum;
-    delete tmpNumbers;
-    delete entropies;
-    delete totalSum;
-    delete tmpPrevPosition;
+    delete[] tmpPartSum;
+    delete[] tmpNumbers;
+    delete[] entropies;
+    delete[] totalSum;
+    delete[] tmpPrevPosition;
   }
   
   //  output data.frame
