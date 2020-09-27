@@ -1,3 +1,4 @@
+#' dhgld;fkh';gljgh\
 #' Translate open reading frames to proteins
 #' @description Translate the identified open reading frames to proteins.
 #' @param f.seq_orf character string giving the name of FASTA file with sequences of identified open
