@@ -33,17 +33,12 @@ if (!is.null(d.work)){
 }
 ### Loading of experimental transcripts in FASTA/FA format.
 if (frt == "fasta" || frt == "fa"){
-##  Loading of required auxiliary library Biostrings.
-#suppressMessages(expr = library(package = Biostrings))
 ##  Loading of experimental transcripts as a list of character strings.
 seq.set <- as.list(x = as.character(x = readDNAStringSet(filepath = f.TrExper,
                                                          format = frt)))
 }
 ### Loading of experimental transcripts in GTF/GFF format.
 if (frt == "gtf" || frt == "gff"){
-##  Loading of required auxiliary libraries.
-#suppressMessages(expr = library(package = rtracklayer))
-#suppressMessages(expr = library(package = genome, character.only = TRUE))
 ##  Loading of experimental transcripts as a list of character strings.
 seq.set <- import(con = f.TrExper, format = frt)
 seq.set <- seq.set[seq.set$type == "exon", ]
