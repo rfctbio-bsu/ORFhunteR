@@ -129,6 +129,6 @@ if (!is.null(x=modelRF)){
         saveRDS(object=clt, file=modelRF)
     }
 }
-### Returning a final object of class data.frame.
+### Returning a final object of class randomForest.
 return(clt)
 }
