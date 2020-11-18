@@ -25,9 +25,10 @@ License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
 StagedInstall: no
-Imports: Rcpp (>= 1.0.3), Biostrings, BSgenome.Hsapiens.UCSC.hg38, 
-  Peptides, data.table, stringr, randomForest, rtracklayer, xfun,
+Imports: Rcpp (>= 1.0.3), BSgenome.Hsapiens.UCSC.hg38, 
+  data.table, stringr, randomForest, xfun,
   stats, utils
+Depends: Biostrings, rtracklayer, Peptides
 LinkingTo: Rcpp
 Suggests: knitr, BiocStyle, rmarkdown
 VignetteBuilder:  knitr
