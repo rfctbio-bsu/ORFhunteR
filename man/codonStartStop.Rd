@@ -14,11 +14,11 @@ list of potential start and stop codons with their coordinates.
 }
 \description{
 This function scans a nucleotide sequence of interest
-in the search of canonical start codon ATG or non-canonical start
-codons GTG, TTG and CTG as well as canonical stop codons TAA, TAG and TGA.
+    in the search of canonical start codon ATG or non-canonical start
+    codons GTG, TTG and CTG as well as stop codons TAA, TAG and TGA.
 }
 \examples{
-codons = codonStartStop(x = "AAAATGGCATGGTAAGTC")
+codons <- codonStartStop(x = "AAAATGGCATGGTAAGTC")
 }
 \author{
 Vasily V. Grinev

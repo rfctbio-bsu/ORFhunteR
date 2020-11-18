@@ -6,16 +6,16 @@
 #' @return list of potential start and stop codons with their coordinates.
 #' @author Vasily V. Grinev
 #' @examples
-#' codons <- codonStartStop(x="AAAATGGCATGGTAAGTC")
+#' codons <- codonStartStop(x = "AAAATGGCATGGTAAGTC")
 #' @export
 
 codonStartStop <- function(x){
-### Calculation of codon positions.
-codons <- DNAStringSet(x=c("ATG", "GTG", "TTG", "CTG", "TAA", "TAG", "TGA"))
-names(x = codons) <- as.character(x=codons)
-codonPositions <- sort(x = unlist(x=matchPDict(pdict=codons,
-                                               subject=DNAString(x=x))))
-codonPositions <- list(start(x=codonPositions), names(x=codonPositions))
-### Returning a final object of class list.
-return(codonPositions)
+  ### Calculation of codon positions.
+  codons <- DNAStringSet(x = c("ATG", "GTG", "TTG", "CTG", "TAA", "TAG", "TGA"))
+  names(x = codons) <- as.character(x=codons)
+  codonPositions <- sort(x = unlist(x=matchPDict(pdict=codons,
+                                                 subject=DNAString(x=x))))
+  codonPositions <- list(start(x=codonPositions), names(x=codonPositions))
+  ### Returning a final object of class list.
+  return(codonPositions)
 }
