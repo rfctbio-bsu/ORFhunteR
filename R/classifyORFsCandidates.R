@@ -58,7 +58,7 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     t1 <- Sys.time( )
     ##  Forming the learning and testing datasets.
     LearnSize <- pLearn * D[1]
-    set.seed(1)
+    # set.seed(1)
     IndexesLearn <- sample(x=1:D[1], size=LearnSize)
     dataLearn <- dataset[IndexesLearn, ]
     dataTestCls <- dataset[-IndexesLearn, ]

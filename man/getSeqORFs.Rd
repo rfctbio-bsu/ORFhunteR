@@ -40,7 +40,7 @@ tr_path <- system.file("extdata",
                        "Set.trans_sequences.fasta",
                        package = "ORFhunteR")
 seq_orfs <- getSeqORFs(orfs = orfs_path,
-                       tr = trans_path,
+                       tr = tr_path,
                        genome = "BSgenome.Hsapiens.UCSC.hg38",
                        workDir = NULL)
 }
