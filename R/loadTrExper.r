@@ -21,6 +21,9 @@ loadTrExper <- function(tr,
     ### Validation of file format.
     ##  Retrieving the file extension.
     frt <- tools::file_ext(x = tr)
+    if(frt == "gz"){
+        frt <- tools::file_ext(x = gsub(".gz", "", tr))
+    }
     ##  Validation of file format.
     if (!frt %in% c("fasta", "fa", "gtf", "gff")){
         stop("Invalid file format")

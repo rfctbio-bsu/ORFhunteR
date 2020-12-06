@@ -15,7 +15,7 @@
 #' @author Mikalai M. Yatskou
 #' @examples
 #' \dontrun{
-#' model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel#1.rds"
+#' model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
 #' ORFs <- predictORF(tr = "Set.trans_sequences.fasta", model = model)
 #' }
 #' @export
@@ -72,10 +72,7 @@ predictORF <- function(tr,
     }
     true_orfs <- true_orfs[order(x=true_orfs$transcript_id), ]
     true_orfs[, 2:5] <- apply(X=true_orfs[, 2:5], MARGIN=2, FUN=as.numeric)
-    if (!is.null(prThr)){
-        true_orfs[true_orfs[, 5] < prThr, 2:4] <- 0
-        true_orfs <- true_orfs[, -5]
-    }
+    true_orfs <- true_orfs[true_orfs[, 5] >= prThr, ]
     rownames(x=true_orfs) <- NULL
     ### Returning a final object of class data.frame.
     return(true_orfs)
@@ -87,7 +84,7 @@ download_model_file <- function() {
     model <- readRDS(path)
     if(length(model) < 1){
         cat("Loading model file (once)...")
-        model <- readRDS(url("http://www.sstcenter.com/download/ORFhunteR/Classif_RF_ORFslncRNA_vs_ORFmRNAs.rds", "r"))
+        model <- readRDS(url("http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds", "r"))
         saveRDS(model, path)
         cat("Done.")
     }

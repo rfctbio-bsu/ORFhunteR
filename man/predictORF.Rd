@@ -37,7 +37,7 @@ Predict the true ORFs in mRNA molecules.
 }
 \examples{
 \dontrun{
-model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel#1.rds"
+model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
 ORFs <- predictORF(tr = "Set.trans_sequences.fasta", model = model)
 }
 }
