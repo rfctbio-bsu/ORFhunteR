@@ -1,31 +1,33 @@
 ---
 title: 'The ORFhunteR package: User’s manual'
-author: "Vasily V. Grinev, Mikalai M. Yatskou et al."
+author: Vasily V. Grinev, Mikalai M. Yatskou, Victor V. Skakun, Maryna K. Chepeleva,
+  Petr V. Nazarov
 date: "`r Sys.Date()`"
+output: BiocStyle::html_document
 package: ORFhunteR
-output: 
-    BiocStyle::html_document:
-    toc_float: true
 abstract: |
-    The ORFhunteR package is a R and C++ library for an automatic determination and annotation of open reading frames (ORF) in a large set of RNA molecules. It efficiently implements the machine learning model based on vectorization of nucleotide sequences and the random forest classification algorithm. The ORFhunteR package consists of a set of functions written in the R language in conjunction with C++. The efficiency of the package was confirmed by the examples of the analysis of RNA molecules from the NCBI RefSeq and Ensembl databases. The package can be used in basic and applied biomedical research related to the study of the transcriptome of normal as well as altered (for example, cancer) human cells. 
+  The ORFhunteR package is R and C++ library for an automatic determination and annotation of open reading frames (ORFs) in a large set of RNA molecules. It efficiently implements the machine learning model based on vectorization of nucleotide sequences and the random forest classification algorithm. The ORFhunteR package consists of a set of functions written in the R language in conjunction with C++. The efficiency of the package was confirmed by the examples of the analysis of RNA molecules from the NCBI RefSeq and Ensembl databases. The package can be used in basic and applied biomedical research related to the study of the transcriptome of normal as well as pathological (for example, cancerous) human cells.
 vignette: |
-    %\VignetteIndexEntry{The ORFhunteR package: User’s manual}
-    %\VignetteEngine{knitr::rmarkdown}
-    %\VignetteEncoding{UTF-8}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{The ORFhunteR package: User’s manual}
+  %\VignetteEngine{knitr::rmarkdown}
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 ```
 
 <font size="2">This document describes the usage of the functions integrated in the package and is meant to be a reference document for the end user. </font>
 
-<font size="2">The ORFhunteR package is considered stable and will undergo few changes from now on. Please, report potential bugs and incompatibilities to <bioinformatics.rfct.bio.bsu@gmail.com>. </font>
+<font size="2">The ORFhunteR package is considered stable and will undergo few changes from now on. Please, report potential bugs and incompatibilities to  <bioinformatics.rfct.bio.bsu@gmail.com>. </font>
 
-The usage of the package functions for an automatic determination and annotation of open reading frames (ORF) is shown for an example set of 10 RNA molecules loaded from the Ensembl. The path to the data set `trans_sequences.fasta` is available as
+The usage of the package functions for an automatic determination and annotation of open reading frames (ORFs) is shown for an example set of 50 mRNA molecules loaded from the Ensembl. The path to the data set `trans_sequences.fasta` is available as
 ```{r}
-f.TrExper_path <- system.file("extdata", "trans_sequences.fasta",
-                              package = "ORFhunteR")
+trans  <- system.file("extdata", "Set.trans_sequences.fasta",
+                      package = "ORFhunteR")
 ```
 
 # Installing and loading the package
@@ -36,112 +38,191 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 BiocManager::install("ORFhunteR")
 ```
-```{r}
+```{r, echo=FALSE}
 library('ORFhunteR')
 ```
+
+# Data availability
+The most important data sets are available with package as an external data. Furthermore, a number of additional data used in this vignette can be downloaded from our SST Center server. 
 
 # Data loading
 You can load the data file of the mRNA molecules with the following command:
 ```{r}
-seq.set <- loaderTrExper(f.TrExper = f.TrExper_path)
+seq.set <- loadTrExper(tr = trans)
 ```
-where the function argument `f.TrExper` is a character string giving the name of file with experimental transcripts. Allowed file formats are `fasta`, `fa`, `gtf` or `gff`.
-The data loading can be omitted if the ORF coordinates are calculated directly using the function `predictORF()`.
+where the function argument `tr` is a character string giving the name of file with transcripts of interest. Allowed file formats are `fasta` or `fa`. Alternative formats are `gtf` or `gff`. With `gtf` or `gff` formats, additional argument genome should be specified. This argument gives the name of pre-installed BSgenome data package with full genome sequences. Default value is `BSgenome.Hsapiens.UCSC.hg38`.
+Irrespective used format of input file, the function `loadTrExper` returns a list of loaded transcript sequences. Each element of this list is character string of nucleotides sequence.
 
-# Automatic determination of open reading frames
-To use out predicting model just call `predictORF()` function.
+# Inferring of ORF candidates
+All possible in-frame ORF candidates in a sequence of interest can be determined by function `findORFs`:
+```{r}
+x <- "AAAATGGCTGCGTAATGCAAAATGGCTGCGAATGCAAAATGGCTGCGAATGCCGGCACGTTGCTACGT"
+orf <- findORFs(x, codStart="ATG")
+```
+where the function argument `x` is a character string giving the nucleotide sequence of interest. In current implementation, the function `findORFs` scans the sequence for all sub-sequences that start with ATG start codon and end in-frame with a stop codon.
+The function findORFs returns a matrix with start and stop positions in RNA molecule, length and sequence of identified variants of ORFs. In fact, the predominant amount of identified ORF candidates are short pseudo-ORFs (see below), as demonstrated in Figure 1.
+```{r echo=FALSE, out.width='75%', fig.align="center"}
+knitr::include_graphics('./Figure_1.jpg')
+```
+Figure 1. Distribution of the length of ORF candidates from lncRNAs and mRNAs and length of true ORFs derived from NCBI RefSeq annotations of human genes. This figure is based on NCBI RefSeq release 109 (GRCh38.p12 human genome assembly).
+
+#Vectorization of the sequence features of ORFs
+The function `vectorizeORFs` extracts and vectorizes the sequences features of ORFs:
+```{r}
+feats <- vectorizeORFs(x=DNAStringSet(x="ATGGGCCTCA"))
+```
+where the function argument `x` is a DNAStringSet object with ORF sequence.
+For each ORF, the function `vectorizeORFs` calculates 104 sequence features: frequency of mono-, di- and trinucleotides (84 features in total), parameters of the Bao model representing the local frequency entropy values of sequences (12 features in total) (Bao J. et al., 2014), correlation factors of nucleotides and length of ORF (8 features in total). As was shown in numerous studies, these features are informative for classification of coding and non-coding RNA molecules. This function returns the object of class data.frame with ORF vectorized into sequence features.
+
+#Calculation of the classification model
+
+The function `classifyORFsCandidates` builds a randomForest classifier for the ORF candidates:
+```{r}
+## The files with sequences can be downloaded from SST Center server at www.sstcenter.com/download/ORFhunteR
+
+fileORFLncRNAs <- "http://www.sstcenter.com/download/ORFhunteR/NCBI_RefSeq_release_109_GRCh38.p12_ORF_candidates_sequences_lncRNAs.fasta.gz"
+ORFLncRNAs <- loadTrExper(tr = fileORFLncRNAs)
+fileORFmRNAs <- "http://www.sstcenter.com/download/ORFhunteR/NCBI_RefSeq_release_109_GRCh38.p12_ORFs_true_sequences_mRNAs.fasta.gz"
+ORFmRNAs <- loadTrExper(tr = fileORFmRNAs)
+## Make the learn dataset from N pseudo- and N real ORFs.
+N <- 1000
+ORFLncRNAs <- ORFLncRNAs[1:N]
+ORFmRNAs <- ORFmRNAs[1:N]
+## Calculate the classification model for the open reading frame.
+clt <- classifyORFsCandidates(ORFLncRNAs = ORFLncRNAs,
+                              ORFmRNAs = ORFmRNAs,
+                              pLearn = 0.75, 
+                              nTrees = 500,
+                              modelRF = NULL,
+                              workDir = NULL)
+```
+where the function argument `ORFLncRNAs` is the object of the class list of pseudo-ORFs, `ORFmRNAs` is the object of the class list of coding true ORFs, `pLearn` is a threshold, in fractions of one, for random selecting the learn set of ORFs (the rest amount, or 1-pLearn, is thus left for the test set of ORFs; default value is 0.75), `nTrees` is a number of trees to grow (this should not be set to too small a number, to ensure that every input row gets predicted at least a few times; default value is 500), `modelRF` is character string, giving the name of RDS-file to store the classification model (NULL is by default), and `workDir` is character string giving the path to and the name of the work directory (NULL is by default that means the current working directory). Here and below, pseudo-ORFs are nucleotide sequences of long non-coding RNA molecules that beginning with ATG start codon and ending in-frame with one of the stop codons, but these sequences are not translated into proteins. We also use this term for non-coding mRNA-derived nucleotide sequences (usually short) with features of ORFs.
+
+The function `classifyORFsCandidates` returns an object of class randomForest (Liaw A. et al., 2002) that can be used for subsequent automatic determination of ORFs in experimental RNA molecules of interest. In addition, the function automatically saves the RDS file of the classification model `modelRF` into the directory `workDir` and generates:
+i)	the randomForest type plots: the sorted variable importance, the error rates, and the dotchart of variable importance as measured by a classification model;
+ii)	the evaluation estimates of the classification model on the learn and test datasets: the confusion matrix and the measures of Accuracy, Precision, Recall, and the Score F1, calculated as
+
+Accuracy	$$Accuracy = \frac{TP + TN}{TP + TN + FP + FN}$$
+Precision	$$Precision = \frac{TP}{TP + FP}$$
+Recall	$$Recall = \frac{TP}{TP + FN}$$
+The Score F1 $$The Score F1 = \frac{2 * TP}{2 * TP + FP + FN}$$
+
+where TP – true positive (the positive class is predicted as the positive class number); FN – false negative (the positive class is predicted as the negative class number); FP – false positive (the negative class is predicted as the positive class number); TN – true negative (the negative class is predicted as the negative class number).
+
+# Automatic identification of true ORFs
+With calculated classification model, identification of the true ORFs among ORF candidates extracted from RNA molecules of interest can be done using function `predictORF`:
 ```{r, results = 'hide'}
-orf_coordinates <- predictORF(f.TrExper = f.TrExper_path, 
-                              genome = "BSgenome.Hsapiens.UCSC.hg38")
+model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
+ORFs <- predictORF(tr = trans,
+                   model= model,
+                   prThr = 0)
 ```
-We get the most likely coordinates of ORFs for each mRNA.
+where the function argument `tr` is a character string giving the name of file with transcripts of interest, `model` is a character string giving the connection or full path to the file from which the classification model is read, and argument `prThr` is probability threshold for the "winning" class of ORFs (default value is 0). Allowed file formats for transcripts of interest are `fasta` or `fa`. Alternative formats are `gtf` or `gff`. With `gtf` or `gff` formats, additional argument `genome` should be specified. This argument gives the name of pre-installed BSgenome data package with full genome sequences. Default value is "BSgenome.Hsapiens.UCSC.hg38".
+The function `predictORF` returns an object of class data.frame with five fields:
 ```{r}
-head(orf_coordinates)
+head(ORFs)
 ```
-The output table is saved as `ORF_predicted_coordinates.txt`. Now you can use some functions for ongoing analysis as shown below.
+The function `predictORF `selects only one ORF candidate per RNA molecule that was assigned with maximal value of `prob` field. In fact, 91.9% of ORFs that were identified in mRNA molecules (Ensembl release 97, GRCh38.p12 human reference genome assembly) demonstrates probability \geqslant 0.9 (Figure 2).
+```{r echo=FALSE, out.width='75%', fig.align="center"}
+knitr::include_graphics('./Figure_2.jpg')
+```
+Figure 2. Empirical cumulative distribution (a) and frequency (b) of probability values for ORFs that were identified in Ensembl human mRNA molecules.
+At the same time, distribution of probability values for ORF candidates from long non-coding RNA molecules is completely differ (Figure 3). This difference between two classes of RNA molecules makes it possible to set a probability threshold prThr that discriminates pseudo- and true ORFs.
+```{r echo=FALSE, out.width='75%', fig.align="center"}
+knitr::include_graphics('./Figure_3.jpg')
+```
+Figure 3. Boxplot demonstrating the distribution of probability values for ORFs that were identified in human mRNAs and lncRNAs (Ensembl release 97, GRCh38.p12 human reference genome assembly).
 
-# Identification of premature termination codons  
-To identify the premature termination codons you need paths to predicted coordinates of ORFs `f.orf` and transcripts of interest `f.trans`.
+# Extraction the sequences of identified ORFs
+The sequences of identified can be extracted with function `getSeqORFs`:
 ```{r}
-f.orf_path <- "ORF_predicted_coordinates.txt"
-f.trans_path <- system.file("extdata", "Set.trans_sequences.gtf", package = "ORFhunteR")
-ptc <- finderPTC(f.orf = f.orf_path,
-                 f.trans = f.trans_path,
-                 frt = "gtf")
+orfs_path <- system.file("extdata",
+                         "Set.trans_ORFs.coordinates.txt",
+                         package="ORFhunteR")
+tr_path <- system.file("extdata",
+                       "Set.trans_sequences.fasta",
+                       package="ORFhunteR")
+seq_orfs <- getSeqORFs(orfs = orfs_path,
+                       tr = tr_path,
+                      genome="BSgenome.Hsapiens.UCSC.hg38",
+                       workDir=NULL)
 ```
-The output is a table with ORFs coordinates and status of stop codons.
+This function needs the name of tab-delimited TXT file with coordinates of ORFs (as generated by function `predictORF`) and the name of file with transcripts of interest. The last file must include the transcripts for which the ORFs were identified and listed in above file with coordinates of ORFs. Allowed file formats for transcripts of interest are `fasta` or `fa`. Alternative formats are `gtf` or `gff`. With `gtf` or `gff` formats, additional argument `genome` should be specified. This argument gives the name of pre-installed BSgenome data package with full genome sequences. Default value is `BSgenome.Hsapiens.UCSC.hg38`.
+The output of function `getSeqORFs` is a DNAStringSet object with sequences of ORFs:
 ```{r}
-head(ptc)
+head(seq_orfs)
+```
+# Annotation of identified ORFs
+## Detection of premature termination codons (PTCs)
+With identified ORFs, the PTCs can be inferred using function `findPTCs`:
+```{r}
+orfs_path <- system.file("extdata",
+                         "Set.trans_ORFs.coordinates.txt",
+                         package="ORFhunteR")
+gtf_path <- system.file("extdata",
+                        "Set.trans_sequences.gtf",
+                        package="ORFhunteR")
+ptcs <- findPTCs(orfs = orfs_path,
+                 gtf = gtf_path, 
+                 workDir = NULL)
+```
+This function needs the name of tab-delimited TXT file with coordinates of ORFs (as generated by function `predictORF`) and the name of file with structure of transcripts in format `gtf` or `gff`. The output of function `findPTCs` is an object of class data.frame with field `stop.status`:
+```{r}
+head(ptcs)
 ```
 
-# Extraction the sequences of identified open reading frames
-The `sequenceORFs()` function extracts predicted ORFs. 
+## In silico translation of identified ORFs
+In silico translation of identified ORFs can be done with function `translateORFs`:
 ```{r}
-f.orf_path <- "ORF_predicted_coordinates.txt"
-f.trans_path <- system.file("extdata", "trans_sequences.fasta", package = "ORFhunteR")
-seqORF <- sequenceORFs(f.orf = f.orf_path,
-                       f.trans = f.trans_path,
-                       frt = "fasta",
-                       f.seq = "ORFs_sequences.fasta")
+seq_orf_path <- system.file("extdata",
+                            "Set.trans_ORFs.sequences.fasta",
+                            package="ORFhunteR")
+prot_seqs <- translateORFs(seqORFs=seq_orf_path)
 ```
-The output is the ORFs coordinates sequences.
+This function accepts `fasta` (or `fa`) file with sequences of identified ORFs (as generated by function `getSeqORFs`) and translates these sequences into strings of amino acids according to standard genetic code. The output of function `translateORFs` is an AAStringSet object with amino acid sequences:
 ```{r}
-head(seqORF)
+head(prot_seqs)
 ```
-We used `f.seq` parameter to save output in `ORFs_sequences.fasta` to use it in next function.
+If necessary, the coding of amino acid symbols can be switched from one-letter to three-letter using argument `aaSymbol` of function.
 
-# Translation of identified open reading frames to proteins
-The `translatorORFs()` function provides translation of ORFs sequences in `f.seq_orf_path` to proteins sequences.
+## Basic annotation of identified ORFs
+The package ORFhunteR includes function `annotateORFs` for basic annotation of identified ORFs. This function works according to following syntax:
 ```{r}
-f.seq_orf_path <- "ORFs_sequences.fasta"
-p.seq <- translatorORFs(f.seq_orf = f.seq_orf_path, 
-                        aa.symbol = 1, 
-                        f.prts = "proteins_sequences.fasta")
-head(p.seq)
+orfs_path <- system.file("extdata",
+                         "Set.trans_ORFs.coordinates.txt",
+                         package="ORFhunteR")
+tr_path <- system.file("extdata",
+                       "Set.trans_sequences.fasta",
+                       package="ORFhunteR")
+gtf_path <- system.file("extdata",
+                        "Set.trans_sequences.gtf",
+                        package="ORFhunteR")
+prts_path <- system.file("extdata",
+                         "Set.trans_proteins.sequences.fasta",
+                         package="ORFhunteR")
+anno_orfs <- annotateORFs(orfs = orfs_path,
+                          tr = tr_path,
+                          gtf = gtf_path,
+                          prts = prts_path,
+                          workDir = NULL)
 ```
-We used f.prts parameter to save output in `proteins_sequences.fasta` to use it in next function.
-
-# Annotation of identified open reading frames
-To create annotation of ORFs you need paths to predicted coordinates of ORFs `f.orf`,   nucleotide sequences of interest `f.fasta` and sequences of in sillico translated proteins `f.prts`. The `f.gtf` with GTF/GFF file with transcripts of interest is optional.
+The function `annotateORFs` needs five arguments. The argument `orfs` is the name of tab-delimited TXT file with coordinates of ORFs (as generated by function predictORF). The argument `tr` is a character string giving the name of file with transcripts of interest. This file must include the transcripts for which the ORFs were identified and listed in above file with coordinates of ORFs. Allowed file formats for transcripts of interest are `fasta` or `fa`. The argument `gtf` is the name of file with structure of transcripts in format `gtf` or `gff.` The argument `prts` is a character string giving the name of `fasta` file with sequences of in silico translated proteins encoded by identified ORFs (as generated by function `translateORFs`). The last argument `workDir` is a character string giving the path to and name of work directory (NULL by default that mean the current working directory).
+The function `annotateORFs` returns an object of class data.frame. This object includes information on each analysed transcript: transcript ID, length of 5'UTRs, type of start codon, start coordinate of ORF, stop coordinate of ORF, type of stop codon, PTC status of stop codon, length of ORF, length of 3'UTRs, molecular weight of in silico translated protein, isoelectic point of a protein sequence and potential protein interaction index.
 ```{r}
-f.orf_path <- "ORF_predicted_coordinates.txt"
-f.fasta_path <- system.file("extdata", "trans_sequences.fasta",                   
-                            package = "ORFhunteR")
-f.gtf_path <- system.file("extdata", "Set.trans_sequences.gtf", 
-                          package = "ORFhunteR")
-f.prts_path <- "proteins_sequences.fasta"
-anno <- annotatorORFs(f.orf = f.orf_path,
-                      f.fasta = f.fasta_path,
-                      f.gtf = f.gtf_path,
-                      f.prts = f.prts_path)
-head(anno)
+head(anno_orfs)
 ```
-To see more about the output table structure use `help(annotatorORFs)`.
-
-# Filtering against the mitochondrial mRNA
-Some mRNA molecules, for example, sourced from the Ensembl database, may correspond to the mitochondrial mRNA hence having mitochondrial either start or stop codons. To filter out such mRNAs the function filterEnsemblORFs() is used as following
-```{r}
-f.fasta_path <- system.file("extdata", "Ensembl_release_85_GRCh38.p7_mRNAs_ex.fasta",
-                            package = "ORFhunteR")
-f.mtRNAs_path <- system.file("extdata", "Ensembl_release_85_GRCh38.p7_mitochondrial_RNAs.txt", 
-                             package = "ORFhunteR")
-f.orf_coords_path <- system.file("extdata",
-                            "Ensembl_release_85_GRCh38.p7_CDS_coordinates_of_mRNAs.txt",
-                            package = "ORFhunteR")
-seq.set_filtered <- filterEnsemblORFs(f.fasta = f.fasta_path,
-                                      f.mtRNAs = f.mtRNAs_path,
-                                      f.orf_coords = f.orf_coords_path)
-```
-where the function arguments are `f.fasta` - character string giving the name of FASTA file; `f.mtRNAs` - character string giving the name of text file in tab-delimited format containing the list of mitochondrial transcripts. This file should include one mandatory field `transcript_id`; `f.orf_coords` - character string giving the name of text file with ORF coordinates.
 
 # Citation
-If you use the ORFhunteR package for a scientific work, please cite it as: 
-Vasily V. Grinev, Mikalai M. Yatskou, Victor V. Skakun, Maryna Chepeleva, Petr V. Nazarov, ORFhunteR: Fast Open Reading Frame Identification, <https://github.com/rfctbio-bsu/ORFhunteR>.
+If you use the ORFhunteR package for a scientific work, then please cite (Yatskou M. M. et al., 2019) and (Skakun V. V. et al., 2020). 
 
 # References 
-M.M. Yatskou, V.V. Skakun, V.V. Grinev. Development of a computational approach for automatic determination of open reading frames in human RNA molecules // Quantum electronics: materials of the XII Intern. Scientific and technical Conf., Minsk, 18–22 Nov. 2019 / editorial board. : M. M. Kugeiko [and others]. - Minsk: RIVSH, 2019. Pp. 279-281.
+Bao J., Yuan R., Bao Z. An improved alignment-free model for DNA sequence similarity metric. // BMC Bioinformatics. – 2014. – Vol. 15. – P. 321. doi: 10.1186/1471-2105-15-321
 
-V. V. Skakun, M. M. Yatskou, P. V. Nazarov, V. V. Grinev. ORFhunteR Software Package For Automatic Detection of Open Reading Frames in Human RNA Molecules / Computer Technology and Data Analysis (CTDA'2020): materials of II Int. scientific-practical Conf., Minsk, 23–24 Apr. 2020 / Belarus. state un-t; editorial board: VV Skakun (editor-in-chief) [and others]. - Minsk: BSU, 2020. Pp. 20-24.
+Liaw A., Wiener M. Classification and regression by randomForest. // R News. – 2002. – Vol. 2. – P. 18-22.
+
+Skakun V. V., Yatskou M. M., Nazarov P. V., Grinev V. V. ORFhunteR software package for automatic detection of open reading frames in human RNA molecules. // Computer Technology and Data Analysis (CTDA’2020): materials of the II International Scientific and Practical Conference, Minsk, 23-24 April 2020 / Editorial board: Skakun V. V. (editor-in-chief) [and others]. – Minsk: BSU, 2020. pp. 20-24.
+
+Yatskou M. M., Skakun V. V., Grinev V. V. Development of a computational approach for automatic determination of open reading frames in human RNA molecules. // Quantum electronics: materials of the XII International Scientific and Technical Conference, Minsk, 18-22 November 2019 / Editorial board: Kugeiko M. M. [and others]. – Minsk: RIVSH, 2019. pp. 279-281.
 
 # Session info {.unnumbered}
 ```{r sessionInfo, echo=FALSE}
