@@ -112,7 +112,7 @@ annotateORFs <- function(orfs,
     }
     seqPrts <- readAAStringSet(filepath=prts)
     ##  Molecular weight calculation.
-    cl <- makeCluster(spec=2)#detectCores() - 1)
+    cl <- makeCluster(spec=detectCores() - 1)
     clusterExport(cl=cl, varlist=c("mw", "pI", "boman"))
     annoORFs$MW <- unlist(x=parLapply(X=seqPrts,
                                       fun=function(y){mw(seq=y)},

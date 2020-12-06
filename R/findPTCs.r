@@ -57,7 +57,7 @@ findPTCs <- function(orfs, gtf, workDir = NULL){
   expTrans <- sort(x=expTrans[expTrans$type == "exon", ])
   expTrans <- split(x=expTrans, f=expTrans$transcript_id)
   ### Identification of PTC(-s).
-  cl <- makeCluster(spec=2)#detectCores() - 1)
+  cl <- makeCluster(spec=detectCores() - 1)
   clusterExport(cl=cl,
                 varlist=c("as.character", "c", "length", "return", 
                           "strand", 
