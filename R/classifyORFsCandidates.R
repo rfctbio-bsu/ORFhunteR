@@ -24,6 +24,7 @@
 #' @importFrom stats aggregate predict 
 #' @importFrom utils read.table
 #' @importFrom graphics plot
+#' @importFrom data.table data.table
 #' @useDynLib ORFhunteR
 
 classifyORFsCandidates <- function(ORFLncRNAs, 
@@ -78,7 +79,7 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     FN <- e[2, 1] #False negative
     FP <- e[1, 2] #False positive
     TN <- e[2, 2] #True negative
-    A <- (TP + TN)/(TP + TP + FP + FN)
+    A <- (TP + TN)/(TP + TN + FP + FN)
     print("Accuracy:")
     print(A)
     P <- TP/(TP + FP)
@@ -94,12 +95,12 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     #****************************************
     ##  Plotting characteristics of classification.
     #   Feature imortance.
-    ImtFts <- importance(x=clt, scale=FALSE)
-    ImtFts_srtd <- sort(x=ImtFts[, 1])
-    plot(ImtFts_srtd)
-    ##  Classification vs the number of trees.
-    plot(clt)
-    varImpPlot(x=clt)
+    # ImtFts <- importance(x=clt, scale=FALSE)
+    # ImtFts_srtd <- sort(x=ImtFts[, 1])
+    # plot(ImtFts_srtd)
+    # ##  Classification vs the number of trees.
+    # plot(clt)
+    # varImpPlot(x=clt)
     ##  Test dataset.
     e <- table(predict(object = clt, newdata = dataTest), 
                factor(x = dataTestCls$Labels))
