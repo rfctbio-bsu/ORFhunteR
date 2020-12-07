@@ -38,7 +38,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE)) {
 }
 BiocManager::install("ORFhunteR")
 ```
-```{r, echo=FALSE}
+```{r, results = 'hide'}
 library('ORFhunteR')
 ```
 

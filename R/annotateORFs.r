@@ -47,7 +47,7 @@
 #'                          package="ORFhunteR")
 #' anno_orfs <- annotateORFs(orfs=orfs_path,
 #'                           tr=tr_path,
-#'                           #gtf=gtf_path,
+#'                           gtf=gtf_path,
 #'                           prts=prts_path,
 #'                           workDir=NULL)
 #' @export
