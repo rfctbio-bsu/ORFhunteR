@@ -54,12 +54,11 @@
 
 annotateORFs <- function(orfs,
                          tr,
-                         gtf = NULL,
+                         gtf=NULL,
                          prts,
-                         workDir = NULL){
-    
+                         workDir=NULL){
     ### Loading of the coordinates of identified open reading frames as an 
-    # object of class data.frame.
+    #   object of class data.frame.
     ##  Full path to the file.
     if (!is.null(x=workDir)){
         orfs_path <- paste(workDir, orfs, sep="/")
@@ -69,7 +68,7 @@ annotateORFs <- function(orfs,
     coordORFs <- coordORFs[order(coordORFs$transcript_id), ]
     ### Creation of an object with annotations.
     ##  Length of 5'UTRs.
-    annoORFs <- coordORFs[, 1:2]
+    annoORFs <- coordORFs[, c("transcript_id", "start")]
     annoORFs$start <- annoORFs$start - 1
     colnames(x=annoORFs) <- c("transcript_id", "f_utr.length")
     ##  Type of start codons.
@@ -93,7 +92,9 @@ annotateORFs <- function(orfs,
                                   stop=annoORFs$orf.stop)
     ##  PTC status of stop codon.
     if (!is.null(x=gtf)){
-        ptc <- findPTCs(orfs=orfs, gtf=gtf, workDir=workDir)[, c(1, 6)]
+        ptc <- findPTCs(orfs=orfs,
+                        gtf=gtf,
+                        workDir=workDir)[, c("transcript_id", "stop.status")]
         ptc <- ptc[order(x=ptc$transcript_id), ]
         annoORFs$stop.status <- ptc$stop.status
         ptc = NULL

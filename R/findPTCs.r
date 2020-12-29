@@ -23,12 +23,12 @@
 #' gtf_path <- system.file("extdata",
 #'                         "Set.trans_sequences.gtf",
 #'                         package="ORFhunteR")
-#' ptcs <- findPTCs(orfs = orfs_path,
-#'                   gtf = gtf_path,
-#'                   workDir = NULL)
+#' ptcs <- findPTCs(orfs=orfs_path,
+#'                  gtf=gtf_path,
+#'                  workDir=NULL)
 #' @export
 
-findPTCs <- function(orfs, gtf, workDir = NULL){
+findPTCs <- function(orfs, gtf, workDir=NULL){
   ### Loading of the coordinates of identified open reading frames as an object
   #   of class data.frame.
   ##  Full path to the file.
@@ -75,12 +75,13 @@ findPTCs <- function(orfs, gtf, workDir = NULL){
                        cl=cl)
   stopCluster(cl=cl)
   lengths <- do.call(what=rbind, args=lengths)
-  idx <- coordORFs[, 1] %in% rownames(x=lengths)
-  coordORFs[idx, 6:7] = lengths[coordORFs[idx, 1], 1:2]
+  idx <- coordORFs[, "transcript_id"] %in% rownames(x=lengths)
+  coordORFs[idx, c("tr_length", "l.ex_width")] <-
+    lengths[coordORFs[idx, "transcript_id"], 1:2]
   coordORFs <- data.frame(coordORFs, stringsAsFactors=FALSE)
   coordORFs[, 2:7] <- apply(X=coordORFs[, 2:7], MARGIN=2, FUN=as.numeric)
   coordORFs$stop.status <- "mature"
-  ptc_ctrl <- coordORFs[, 3] - (coordORFs[, 6] - coordORFs[, 7] + 1) <= -50
+  ptc_ctrl <- coordORFs$end - (coordORFs$tr_length - coordORFs$l.ex_width + 1) <= -50
   if (any(ptc_ctrl)){
     coordORFs[ptc_ctrl, ]$stop.status <- "premature"
   } 

@@ -16,25 +16,25 @@
 #' @examples
 #' \dontrun{
 #' model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
-#' ORFs <- predictORF(tr = "Set.trans_sequences.fasta", model = model)
+#' ORFs <- predictORF(tr="Set.trans_sequences.fasta", model=model)
 #' }
 #' @export
 
 predictORF <- function(tr,
-                       genome = "BSgenome.Hsapiens.UCSC.hg38",
-                       model = NULL,
-                       prThr = NULL,
-                       workDir = NULL){
+                       genome="BSgenome.Hsapiens.UCSC.hg38",
+                       model=NULL,
+                       prThr=NULL,
+                       workDir=NULL){
     ### Loading of the experimental transcripts as a list of character strings.
     exp_trans <- loadTrExper(tr=tr, genome=genome, workDir=workDir)
     ### Identification of all possible ORFs in experimental transcripts.
     cl <- makeCluster(spec=detectCores() - 1)
     clusterExport(cl=cl,
-                varlist=c("findORFs", "DNAStringSet", "matchPDict", "DNAString",
-                          "aggregate", "codonStartStop", "c", "outer", "round",
-                          "length", "t", "lower.tri", "cbind", "list", "min",
-                          "order", "substring", "do.call", "colnames", "return",
-                          "names", "as.character", "sort", "unlist", "start"))
+                  varlist=c("findORFs", "DNAStringSet", "matchPDict", "DNAString",
+                            "aggregate", "codonStartStop", "c", "outer", "round",
+                            "length", "t", "lower.tri", "cbind", "list", "min",
+                            "order", "substring", "do.call", "colnames", "return",
+                            "names", "as.character", "sort", "unlist", "start"))
     all_orfs <- parLapply(X=exp_trans,
                           fun=function(y){orf <- findORFs(x=y)},
                           cl=cl)
@@ -42,19 +42,23 @@ predictORF <- function(tr,
     all_orfs <- cbind(transcript_id=rep(x=names(x=exp_trans),
                                         times=lengths(all_orfs)/4),
                       do.call(what=rbind, args=all_orfs))
-    all_orfs <- all_orfs[as.numeric(all_orfs[, 4]) >= 42, ]
+    all_orfs <- all_orfs[as.numeric(all_orfs[, "length"]) >= 42, ]
     ### Classification of the all identified ORFs.
     ##  Annotation of the all identified ORFs with sequence features.
-    prob_orfs <- vectorizeORFs(x=DNAStringSet(x=all_orfs[, 5]))
+    prob_orfs <- vectorizeORFs(x=DNAStringSet(x=all_orfs[, "orf.sequence"]))
     ##  Import of the classification model.
-    if(is.null(model)){
+    if(is.null(x=model)){
         model <- download_model_file()
     } else {
         model <- readRDS(file=file(description=model))
     }
     ##  Classification.
     prob_orfs <- predict(object=model, newdata=prob_orfs, type="prob")
-    prob_orfs <- data.table(cbind(all_orfs[, 1:4], prob=prob_orfs[, 2]))
+    prob_orfs <- data.table(cbind(all_orfs[, c("transcript_id",
+                                               "start",
+                                               "end",
+                                               "length")],
+                                  prob=prob_orfs[, "3"]))
     ### Data aggregation anf filtration.
     true_orfs <- prob_orfs[prob_orfs[, .I[prob == max(x=prob)],
                                      by=transcript_id]$V1]
@@ -66,13 +70,16 @@ predictORF <- function(tr,
     if (length(x=exp_trans) > length(x=true_orfs$transcript_id)){
         mis <- names(x=exp_trans)[!names(x=exp_trans) %in% 
                                       true_orfs$transcript_id]
-        mat <- matrix(0L, nrow = length(x=mis), ncol = 4)
+        mat <- matrix(0L, nrow=length(x=mis), ncol=4)
         colnames(x=mat) <- c("start", "end", "length", "prob")
         true_orfs <- rbind(true_orfs, cbind(transcript_id=mis, mat))
     }
     true_orfs <- true_orfs[order(x=true_orfs$transcript_id), ]
-    true_orfs[, 2:5] <- apply(X=true_orfs[, 2:5], MARGIN=2, FUN=as.numeric)
-    true_orfs <- true_orfs[true_orfs[, 5] >= prThr, ]
+    true_orfs[, c("start", "end", "length", "prob")] <-
+        apply(X=true_orfs[, c("start", "end", "length", "prob")],
+              MARGIN=2,
+              FUN=as.numeric)
+    true_orfs <- true_orfs[true_orfs[, "prob"] >= prThr, ]
     rownames(x=true_orfs) <- NULL
     ### Returning a final object of class data.frame.
     return(true_orfs)
