@@ -95,7 +95,7 @@ clt <- classifyORFsCandidates(ORFLncRNAs = ORFLncRNAs,
                               nTrees = 500,
                               modelRF = NULL,
                               workDir = NULL,
-                              showAccuracy = T)
+                              showAccuracy = TRUE)
 ```
 where the function argument `ORFLncRNAs` is the object of the class list of pseudo-ORFs, `ORFmRNAs` is the object of the class list of coding true ORFs, `pLearn` is a threshold, in fractions of one, for random selecting the learn set of ORFs (the rest amount, or 1-pLearn, is thus left for the test set of ORFs; default value is 0.75), `nTrees` is a number of trees to grow (this should not be set to too small a number, to ensure that every input row gets predicted at least a few times; default value is 500), `modelRF` is character string, giving the name of RDS-file to store the classification model (NULL is by default), and `workDir` is character string giving the path to and the name of the work directory (NULL is by default that means the current working directory). Here and below, pseudo-ORFs are nucleotide sequences of long non-coding RNA molecules that beginning with ATG start codon and ending in-frame with one of the stop codons, but these sequences are not translated into proteins. We also use this term for non-coding mRNA-derived nucleotide sequences (usually short) with features of ORFs.
 
