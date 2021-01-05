@@ -10,7 +10,8 @@ classifyORFsCandidates(
   pLearn = 0.75,
   nTrees = 500,
   modelRF = NULL,
-  workDir = NULL
+  workDir = NULL,
+  showAccuracy = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,9 @@ the classification model. NULL by default.}
 
 \item{workDir}{character string giving the path to and name of work
 directory. NULL by default that mean the current working directory.}
+
+\item{showAccuracy}{logic TRUE or FALSE. Use TRUE for print accuracy metrics. 
+Default value is FALSE}
 }
 \value{
 The classificator object of the class randomForest.

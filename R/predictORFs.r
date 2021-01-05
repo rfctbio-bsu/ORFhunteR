@@ -85,15 +85,12 @@ predictORF <- function(tr,
     return(true_orfs)
 }
 
-
 download_model_file <- function() {
     path <- system.file("extdata", "cl_model.rds", package = "ORFhunteR")
     model <- readRDS(path)
     if(length(model) < 1){
-        cat("Loading model file (once)...")
         model <- readRDS(url("http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds", "r"))
         saveRDS(model, path)
-        cat("Done.")
     }
     return(model)
 }

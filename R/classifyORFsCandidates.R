@@ -10,6 +10,8 @@
 #'     the classification model. NULL by default.
 #' @param workDir character string giving the path to and name of work
 #'     directory. NULL by default that mean the current working directory.
+#' @param showAccuracy logic TRUE or FALSE. Use TRUE for print accuracy metrics. 
+#'     Default value is FALSE
 #' @return The classificator object of the class randomForest.
 #' @author Mikalai M. Yatskou
 #' @examples
@@ -32,16 +34,13 @@ classifyORFsCandidates <- function(ORFLncRNAs,
                                    pLearn = 0.75, 
                                    nTrees = 500,
                                    modelRF = NULL,
-                                   workDir = NULL){
+                                   workDir = NULL,
+                                   showAccuracy = FALSE){
     ### Vectorizing ORFs.
-    t1 <- Sys.time()
     ORFLncRNAs <- DNAStringSet(x = do.call(what=rbind, args=ORFLncRNAs))
     ORFLncRNAsVctd <- vectorizeORFs(ORFLncRNAs)
     ORFmRNAs <- DNAStringSet(do.call(rbind, ORFmRNAs))
     ORFmRNAsVctd <- vectorizeORFs(x = ORFmRNAs)
-    t2 <- Sys.time()
-    print("Time of vectorisation:")
-    print(t2-t1)
     
     #****************************************
     ### Making the ORF dataset for classification.
@@ -56,7 +55,6 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     D <- dim(x=dataset)
     NRNAs <- D[1]
     NFtrs <- D[2]
-    t1 <- Sys.time( )
     ##  Forming the learning and testing datasets.
     LearnSize <- pLearn * D[1]
     # set.seed(1)
@@ -67,40 +65,21 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     dataTemp <- dataLearn
     dataTemp$Labels <- NULL
     clt <- randomForest(dataTemp, factor(dataLearn$Labels))
-    t2 <- Sys.time()
-    print("Time of classification:")
-    print(t2-t1)
-    print(clt)
     ##  Learning dataset.
     e <- clt$confusion
-    print("*********************")
-    print("Training dataset")
     TP <- e[1, 1] #True positive
     FN <- e[2, 1] #False negative
     FP <- e[1, 2] #False positive
     TN <- e[2, 2] #True negative
     A <- (TP + TN)/(TP + TN + FP + FN)
-    print("Accuracy:")
-    print(A)
     P <- TP/(TP + FP)
-    print("Precision rate:")
-    print(P)
     R <- TP/(TP + FN)
-    print("Recall:")
-    print(R)
     F1 <- (2 * TP)/(2 * TP + FP + FN) 
-    print("The score F1:")
-    print(F1)
-    
-    #****************************************
-    ##  Plotting characteristics of classification.
-    #   Feature imortance.
-    # ImtFts <- importance(x=clt, scale=FALSE)
-    # ImtFts_srtd <- sort(x=ImtFts[, 1])
-    # plot(ImtFts_srtd)
-    # ##  Classification vs the number of trees.
-    # plot(clt)
-    # varImpPlot(x=clt)
+    if(showAccuracy){
+        cat("Training dataset\n")
+        cat("Accuracy:", A, "\nPrecision rate:", P,
+            "\nRecall:", R, "\nThe score F1:", F1, "\n")
+    }
     ##  Test dataset.
     e <- table(predict(object = clt, newdata = dataTest), 
                factor(x = dataTestCls$Labels))
@@ -108,21 +87,15 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     FN <- e[2, 1]
     FP <- e[1, 2]
     TN <- e[2, 2]
-    print("*********************")
-    print("Test dataset")
     A <- (TP + TN)/(TP+ TP + FP + FN)
-    print("Accuracy:")
-    print(A)
     P <- TP/(TP + FP)
-    print("Precision rate:")
-    print(P)
     R <- TP/(TP + FN)
-    print("Recall:")
-    print(R)
     F1 <- (2 * TP)/(2 * TP + FP + FN) 
-    print("The score F1:")
-    print(F1)
-    
+    if(showAccuracy){
+        cat("Test dataset\n")
+        cat("Accuracy:", A, "\nPrecision rate:", P,
+            "\nRecall:", R, "\nThe score F1:", F1, "\n")
+    }
     #****************************************
     ### Saving the classification model into the RDS-file.
     ##  Full path to the file.
