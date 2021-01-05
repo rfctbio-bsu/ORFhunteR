@@ -57,7 +57,13 @@ findPTCs <- function(orfs, gtf, workDir=NULL){
   expTrans <- sort(x=expTrans[expTrans$type == "exon", ])
   expTrans <- split(x=expTrans, f=expTrans$transcript_id)
   ### Identification of PTC(-s).
-  cl <- makeCluster(spec=detectCores() - 1)
+  chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+  if (nzchar(chk) && chk == "TRUE") {
+    ncl <- 2L
+  } else {
+    ncl <- parallel::detectCores()-1
+  }
+  cl <- makeCluster(spec=ncl)
   clusterExport(cl=cl,
                 varlist=c("as.character", "c", "length", "return", 
                           "strand", 

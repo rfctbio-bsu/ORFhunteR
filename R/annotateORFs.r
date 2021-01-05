@@ -113,7 +113,14 @@ annotateORFs <- function(orfs,
     }
     seqPrts <- readAAStringSet(filepath=prts)
     ##  Molecular weight calculation.
-    cl <- makeCluster(spec=detectCores() - 1)
+    chk <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+    if (nzchar(chk) && chk == "TRUE") {
+        #use 2 cores in CRAN/Travis/AppVeyor
+        ncl <- 2L
+    } else {
+        ncl <- parallel::detectCores() - 1
+    }
+    cl <- makeCluster(spec=ncl)
     clusterExport(cl=cl, varlist=c("mw", "pI", "boman"))
     annoORFs$MW <- unlist(x=parLapply(X=seqPrts,
                                       fun=function(y){mw(seq=y)},
