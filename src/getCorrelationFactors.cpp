@@ -8,13 +8,13 @@ SEXP getCorrelationFactors (SEXP string, SEXP pattern, SEXP blockSize)
   //  input data
   Rcpp::CharacterVector strVect(string);
   Rcpp::CharacterVector patVect(pattern);
-  Rcpp::NumericVector partSizeVect(blockSize);
+  NumericVector partSizeVect(blockSize);
   int rowsNum = strVect.size();
   int partSize = partSizeVect[0];
   char firstNucleotide = patVect[0][0];
   char secondNucleotide = patVect[0][1];
   //  output vector
-  Rcpp:NumericVector result(rowsNum);
+  NumericVector result(rowsNum);
   //  foreach sequence in source data
   for (int i = 0; i < rowsNum; i ++)
   {

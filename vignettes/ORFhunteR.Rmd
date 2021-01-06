@@ -226,6 +226,6 @@ Skakun V. V., Yatskou M. M., Nazarov P. V., Grinev V. V. ORFhunteR software pack
 Yatskou M. M., Skakun V. V., Grinev V. V. Development of a computational approach for automatic determination of open reading frames in human RNA molecules. // Quantum electronics: materials of the XII International Scientific and Technical Conference, Minsk, 18-22 November 2019 / Editorial board: Kugeiko M. M. [and others]. – Minsk: RIVSH, 2019. pp. 279-281.
 
 # Session info {.unnumbered}
-```{r sessionInfo, echo=FALSE}
+```{r sessionInfo, echo=FALSE, eval=FALSE}
 sessionInfo()
 ```
