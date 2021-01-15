@@ -8,7 +8,7 @@ predictORF(
   tr,
   genome = "BSgenome.Hsapiens.UCSC.hg38",
   model = NULL,
-  prThr = NULL,
+  prThr = 0.5,
   workDir = NULL
 )
 }
@@ -24,7 +24,7 @@ from which the classification model is read. Use default NULL value to
 use our default model.}
 
 \item{prThr}{probability threshold for the "winning" class of ORFs.
-Default value is NULL.}
+Default value is 0.5.}
 
 \item{workDir}{character string giving the path to and name of work
 directory. NULL by default that mean the current working directory.}
@@ -37,8 +37,11 @@ Predict the true ORFs in mRNA molecules.
 }
 \examples{
 \dontrun{
+tr_path <- system.file("extdata",
+                       "Set.trans_sequences.fasta",
+                       package="ORFhunteR")
 model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
-ORFs <- predictORF(tr = "Set.trans_sequences.fasta", model = model)
+ORFs <- predictORF(tr=tr_path, model=model)
 }
 }
 \author{

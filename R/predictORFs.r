@@ -5,7 +5,7 @@
 #' @param genome character string giving the name of BSgenome data package with
 #'     full genome sequences. Default value is "BSgenome.Hsapiens.UCSC.hg38".
 #' @param prThr probability threshold for the "winning" class of ORFs.
-#'     Default value is NULL.
+#'     Default value is 0.5.
 #' @param model character string giving the connection or full path to the file
 #'     from which the classification model is read. Use default NULL value to 
 #'     use our default model.
@@ -15,15 +15,18 @@
 #' @author Mikalai M. Yatskou
 #' @examples
 #' \dontrun{
+#' tr_path <- system.file("extdata",
+#'                        "Set.trans_sequences.fasta",
+#'                        package="ORFhunteR")
 #' model <- "http://www.sstcenter.com/download/ORFhunteR/classRFmodel_1.rds"
-#' ORFs <- predictORF(tr="Set.trans_sequences.fasta", model=model)
+#' ORFs <- predictORF(tr=tr_path, model=model)
 #' }
 #' @export
 
 predictORF <- function(tr,
                        genome="BSgenome.Hsapiens.UCSC.hg38",
                        model=NULL,
-                       prThr=NULL,
+                       prThr=0.5,
                        workDir=NULL){
     ### Loading of the experimental transcripts as a list of character strings.
     exp_trans <- loadTrExper(tr=tr, genome=genome, workDir=workDir)
@@ -60,11 +63,11 @@ predictORF <- function(tr,
                                                "length")],
                                   prob=prob_orfs[, "3"]))
     ### Data aggregation anf filtration.
-    true_orfs <- prob_orfs[prob_orfs[, .I[prob == max(x=prob)],
+    true_orfs <- prob_orfs[prob_orfs[, .I[prob == max(prob)],
                                      by=transcript_id]$V1]
-    true_orfs <- true_orfs[true_orfs[, .I[length == max(x=length)],
+    true_orfs <- true_orfs[true_orfs[, .I[length == max(length)],
                                      by=transcript_id]$V1]
-    true_orfs <- true_orfs[true_orfs[, .I[start == min(x=start)],
+    true_orfs <- true_orfs[true_orfs[, .I[start == min(start)],
                                      by=transcript_id]$V1]
     true_orfs <- data.frame(true_orfs)
     if (length(x=exp_trans) > length(x=true_orfs$transcript_id)){
