@@ -26,7 +26,6 @@
 #' @importFrom stats aggregate predict 
 #' @importFrom utils read.table
 #' @importFrom graphics plot
-#' @importFrom data.table data.table
 #' @useDynLib ORFhunteR
 
 classifyORFsCandidates <- function(ORFLncRNAs, 
