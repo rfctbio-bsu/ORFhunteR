@@ -57,7 +57,7 @@ predictORF <- function(tr,
     }
     ##  Classification.
     prob_orfs <- predict(object=model, newdata=prob_orfs, type="prob")
-    prob_orfs <- data.table(cbind(all_orfs[, c("transcript_id",
+    prob_orfs <- data.table::data.table(cbind(all_orfs[, c("transcript_id",
                                                "start",
                                                "end",
                                                "length")],

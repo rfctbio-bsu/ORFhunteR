@@ -1,6 +1,7 @@
 /*This function was fixed by Vlad Yatskou
 30.06.2019
 */
+// remuved Rcpp:: #15 due to ubunta CMD Check warnings /mc
 #include <Rcpp.h>
 using namespace Rcpp;
 
@@ -11,7 +12,7 @@ SEXP getPatternCount_V (SEXP string, SEXP pattern)
   Rcpp::CharacterVector patVect(pattern);
   int rowsNum = strVect.size();
   int patternSize = strlen(patVect[0]);
-  Rcpp:NumericVector result(rowsNum);
+  NumericVector result(rowsNum);
   
   for (int i = 0; i < rowsNum; i ++)
   {
