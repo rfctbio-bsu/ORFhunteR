@@ -75,8 +75,8 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     R <- TP/(TP + FN)
     F1 <- (2 * TP)/(2 * TP + FP + FN) 
     if(showAccuracy){
-        cat("Training dataset\n")
-        cat("Accuracy:", A, "\nPrecision rate:", P,
+        message("Training dataset\n")
+        message("Accuracy:", A, "\nPrecision rate:", P,
             "\nRecall:", R, "\nThe score F1:", F1, "\n")
     }
     ##  Test dataset.
@@ -91,8 +91,8 @@ classifyORFsCandidates <- function(ORFLncRNAs,
     R <- TP/(TP + FN)
     F1 <- (2 * TP)/(2 * TP + FP + FN) 
     if(showAccuracy){
-        cat("Test dataset\n")
-        cat("Accuracy:", A, "\nPrecision rate:", P,
+        message("Test dataset\n")
+        message("Accuracy:", A, "\nPrecision rate:", P,
             "\nRecall:", R, "\nThe score F1:", F1, "\n")
     }
     #****************************************
