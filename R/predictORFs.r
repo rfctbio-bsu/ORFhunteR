@@ -33,11 +33,11 @@ predictORF <- function(tr,
     ### Identification of all possible ORFs in experimental transcripts.
     cl <- makeCluster(spec=detectCores() - 1)
     clusterExport(cl=cl,
-                  varlist=c("findORFs", "DNAStringSet", "matchPDict", "DNAString",
-                            "aggregate", "codonStartStop", "c", "outer", "round",
-                            "length", "t", "lower.tri", "cbind", "list", "min",
-                            "order", "substring", "do.call", "colnames", "return",
-                            "names", "as.character", "sort", "unlist", "start"))
+                varlist=c("findORFs", "DNAStringSet", "matchPDict", "DNAString",
+                        "aggregate", "codonStartStop", "c", "outer", "round",
+                        "length", "t", "lower.tri", "cbind", "list", "min",
+                        "order", "substring", "do.call", "colnames", "return",
+                        "names", "as.character", "sort", "unlist", "start"))
     all_orfs <- parLapply(X=exp_trans,
                           fun=function(y){orf <- findORFs(x=y)},
                           cl=cl)
