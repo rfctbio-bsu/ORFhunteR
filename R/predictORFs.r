@@ -63,12 +63,13 @@ predictORF <- function(tr,
                                                "length")],
                                   prob=prob_orfs[, "3"]))
     ### Data aggregation anf filtration.
+    prob <- NULL
     true_orfs <- prob_orfs[prob_orfs[, .I[prob == max(prob)],
-                                     by=transcript_id]$V1]
+                                   by="transcript_id"]$V1]
     true_orfs <- true_orfs[true_orfs[, .I[length == max(length)],
-                                     by=transcript_id]$V1]
+                                     by="transcript_id"]$V1]
     true_orfs <- true_orfs[true_orfs[, .I[start == min(start)],
-                                     by=transcript_id]$V1]
+                                     by="transcript_id"]$V1]
     true_orfs <- data.frame(true_orfs)
     if (length(x=exp_trans) > length(x=true_orfs$transcript_id)){
         mis <- names(x=exp_trans)[!names(x=exp_trans) %in% 
