@@ -61,10 +61,10 @@ annotateORFs <- function(orfs,
     #   object of class data.frame.
     ##  Full path to the file.
     if (!is.null(x=workDir)){
-        orfs_path <- paste(workDir, orfs, sep="/")
+        orfs <- paste(workDir, orfs, sep="/")
     }
     ##  Loading of the coordinates.
-    coordORFs <- read.table(file=orfs_path, header=TRUE, quote="\"", as.is=TRUE)
+    coordORFs <- read.table(file=orfs, header=TRUE, quote="\"", as.is=TRUE)
     coordORFs <- coordORFs[order(coordORFs$transcript_id), ]
     ### Creation of an object with annotations.
     ##  Length of 5'UTRs.
