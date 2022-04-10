@@ -31,6 +31,8 @@ browseVignettes("ORFhunteR")
 bioinformatics.rfct.bio.bsu@gmail.com
 
 ### References
+Grinev V. V. ORFhunteR: An accurate approach to the automatic identification and annotation of open reading frames in human mRNA molecules / V. V. Grinev, M. M. Yatskou, V. V. Skakun, M. K. Chepeleva, P. V. Nazarov // Software Impacts, 2022. 100268. https://doi.org/10.1016/j.simpa.2022.100268.
+
 ORFhunteR: an accurate approach for the automatic identification and annotation of open reading frames in human mRNA molecules. Vasily V. Grinev, Mikalai M. Yatskou, Victor V. Skakun, Maryna K. Chepeleva, Petr V. Nazarov. bioRxiv 2021.02.05.429963; doi: https://doi.org/10.1101/2021.02.05.429963
 
 Yatskou M. M., Skakun V. V., Grinev V. V. Development of a computational approach for automatic determination of open reading frames in human RNA molecules. // Quantum electronics: materials of the XII International Scientific and Technical Conference, Minsk, 18-22 November 2019 / Editorial board: Kugeiko M. M. [and others]. - Minsk: RIVSH, 2019. pp. 279-281.
