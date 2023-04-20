@@ -152,12 +152,12 @@ SEXP getBaoMetrics (SEXP sequences, SEXP indexes, SEXP types)
     
     for (int k = 0; k < 12; k ++)
     {
-      delete tmpPartSum[k];
-      delete tmpNumbers[k];
+      delete[] tmpPartSum[k];
+      delete[] tmpNumbers[k];
     }
-    delete tmpStrings[0];
-    delete tmpStrings[1];
-    delete tmpStrings[2];
+    delete[] tmpStrings[0];
+    delete[] tmpStrings[1];
+    delete[] tmpStrings[2];
     delete[] tmpStrings;
     delete[] tmpPartSum;
     delete[] tmpNumbers;
