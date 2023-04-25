@@ -2,7 +2,7 @@ Package: ORFhunteR
 Type: Package
 biocViews: Technology, StatisticalMethod, Sequencing, RNASeq, Classification, FeatureExtraction
 Title: Predict open reading frames in nucleotide sequences
-Version: 1.7.1
+Version: 1.8.0
 Authors@R: 
         c(person(given = "Vasily V.",
              family = "Grinev",
