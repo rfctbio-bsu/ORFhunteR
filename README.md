@@ -7,6 +7,10 @@ The ORFhunteR package is a R and C++ library for an automatic identification and
 Fig. (A) The main stages for automatic identification of ORFs in RNA molecules.
 (B) The functional structure of ORFhunteR package.
 
+
+The official Bioconductor package page can be found here: https://www.bioconductor.org/packages/ORFhunteR
+
+
 ### Installation
 Package is available from bioconductor 3.13 (R version >= 4.0.0)
 ```r
@@ -26,6 +30,12 @@ Read vignette
 ```r
 browseVignettes("ORFhunteR")
 ``` 
+
+### Citation 
+Please, cite `ORFhunteR` as
+```
+Grinev, V. V., Yatskou, M. M., Skakun, V. V., Chepeleva, M. K., & Nazarov, P. V. (2022). ORFhunteR: An accurate approach to the automatic identification and annotation of open reading frames in human mRNA molecules[Formula presented]. Software Impacts, 12, Article 100268. https://doi.org/10.1016/j.simpa.2022.100268
+```
 
 ### Contact
 bioinformatics.rfct.bio.bsu@gmail.com
