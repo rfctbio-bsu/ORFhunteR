@@ -1,0 +1,13 @@
+citHeader("To cite the package 'ORFhunteR' in publications use:")
+
+citEntry(entry="article",
+         title = "ORFhunteR: An accurate approach to the automatic identification and annotation of open reading frames in human mRNA molecules",
+         author = personList(as.person("Vasily V. Grinev"),
+                             as.person("Mikalai M. Yatskou"),
+                             as.person("Victor V. Skakun"),
+                             as.person("Maryna K. Chepeleva"),
+                             as.person("Petr V. Nazarov")),
+         year = 2022,
+         journal = "Software Impacts",
+	 doi = "10.1016/j.simpa.2022.100268",
+         textVersion = "Grinev, V. V., Yatskou, M. M., Skakun, V. V., Chepeleva, M. K., & Nazarov, P. V. (2022). ORFhunteR: An accurate approach to the automatic identification and annotation of open reading frames in human mRNA molecules[Formula presented]. Software Impacts, 12, Article 100268. https://doi.org/10.1016/j.simpa.2022.100268")
