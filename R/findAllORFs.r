@@ -19,7 +19,7 @@
 #'     Default value is "ATG".
 #' @param workDir character string giving the path to and name of work
 #'     directory. NULL by default that means the current working directory.
-#' @return data frame with following six fields:
+#' @return data frame with six following fields:
 #'     i) transcript_id - ID of sequence;
 #'     ii) orf_id       - ID of open reading frame;
 #'     iii) start       - start coordinate of open reading frame in a sequence;
@@ -41,15 +41,15 @@
 #'                   "Set.trans_sequences.fasta",
 #'                   package="ORFhunteR")
 #' orf <- findAllORFs(x=tr, codStart="ATG", workDir=NULL)
-#' ### Input of file with custom sequences of interest:
-#' tr <- "Set.trans_sequences.fasta"
-#' orf <- findAllORFs(x=tr, codStart="ATG", workDir=NULL)
+#' ### Input of custom file with sequences of interest:
+#' # tr <- "path/Set.trans_sequences.fasta" 
+#' # orf <- findAllORFs(x=tr, codStart="ATG", workDir=NULL)
 #' ### Usage of alternative start codon:
-#' tr <- "Set.trans_sequences.fasta"
+#' tr <- "ACGCCTAGCTGGATTTGCCCATATGCGATTTACGAAGTGCCCAGTGAGTTAGCCAC"
 #' orf <- findAllORFs(x=tr, codStart="CTG", workDir=NULL)
 #' @export
 
-findORFs <- function(x, codStart="ATG", workDir=NULL){
+findAllORFs <- function(x, codStart="ATG", workDir=NULL){
   ### Loading of the nucleotide sequence(-s) of interest as an object of
   #   class DNAStringSet.
   if (class(x=x) == "character" & unique(x=tools::file_ext(x=x) == "")){
@@ -91,6 +91,10 @@ findORFs <- function(x, codStart="ATG", workDir=NULL){
   tr_stop <- data.frame(tr_stop)
   tr_stop <- tr_stop[, c(4, 1:2)]
   colnames(x=tr_stop) <- c("seqnames", "start", "end")
+  if(nrow(tr_start) == 0 | nrow(tr_stop) == 0){
+    message("No start of stop codons found \n")
+    return(NULL)
+  }
   tr_start <- tr_start[tr_start$seqnames %in% tr_stop$seqnames, ]
   tr_start <- tr_start[order(x=tr_start$seqnames), ]
   rownames(x=tr_start) <- NULL
@@ -98,13 +102,14 @@ findORFs <- function(x, codStart="ATG", workDir=NULL){
   tr_stop <- tr_stop[order(x=tr_stop$seqnames), ]
   rownames(x=tr_stop) <- NULL
   tr_start <- split(x=tr_start, f=tr_start$seqnames)
+  
   tr_stop <- split(x=tr_stop, f=tr_stop$seqnames)
   seqs <- seqs[names(x=seqs) %in% names(x=tr_start)]
   tr_start <- tr_start[names(x=tr_start) %in% names(x=seqs)]
   tr_stop <- tr_stop[names(x=tr_stop) %in% names(x=seqs)]
   ### Identification of all possible variants of open reading frames.
   ORFs <- list()
-  for (i in 1:length(x=tr_start)){
+  for (i in seq.int(1,length(tr_start))){
     inFrame <- outer(X=tr_stop[[i]]$start,
                      Y=tr_start[[i]]$start,
                      FUN="-")/3
