@@ -69,11 +69,10 @@ findAllORFs <- function(x, codStart="ATG", workDir=NULL){
   }
   if (class(x=x) == "character" & unique(x=tools::file_ext(x=x)
                                          %in% c("fa", "fasta"))){
-    if (is.null(x=workDir)){
-      workDir <- getwd()
+    if (!is.null(workDir)){
+     x <- paste(workDir, x, sep="/")
     }
-    seqs <- paste(workDir, x, sep="/")
-    seqs <- readDNAStringSet(filepath=seqs)
+    seqs <- readDNAStringSet(filepath=x)
     seqs <- seqs[order(x=names(x=seqs)), ]
   }
   if (class(x=x) == "DNAStringSet"){
