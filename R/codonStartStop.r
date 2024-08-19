@@ -7,6 +7,7 @@
 #' @param x character string giving the nucleotide sequence.
 #' @return list of potential start and stop codons with their coordinates.
 #' @author Vasily V. Grinev
+#' Last updated: June 12, 2024
 #' @examples
 #' codons <- codonStartStop(x="AAAATGGCATGGTAAGTCAAAATGGCATGGTAAGTCAAAATGGCGG")
 #' @export
