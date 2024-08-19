@@ -1,6 +1,6 @@
 #' Translate any nucleotide sequences to peptide sequences
 #' @description Translation of any nucleotide sequences to peptide sequences.
-#' @param x character string giving the name of FASTA file with nucleotide
+#' @param x character string giving the path to FASTA file with nucleotide
 #'     sequences of interest.
 #' @param codones location of tab-delimited TXT file with genetic code. Default
 #'     value is "internal" for system extdata. Alternatively, the name of
@@ -13,17 +13,17 @@
 #'     directory. NULL by default that mean the current working directory.
 #' @return list of three AAStringSet objects with peptide sequences.
 #' @author Vasily V. Grinev, Katsiaryna V. Huzava
+#' Last updated: August 19, 2024.
 #' @examples
-#' seqs <-system.file("extdata",
+#' seqs <- system.file("extdata",
 #'                    "Set.trans_sequences.for.translation.fasta",
 #'                    package="ORFhunteR")
 #' res <- translate(x=seqs,
 #'                  codones="internal",
 #'                  aaSymbol=1,
-#'                  pep_length=8, 
+#'                  pep_length=8,
 #'                  workDir=NULL)
 #' @export
-#' Last updated: June 12, 2024.
 
 translate <- function(x,
                       codones="internal",
@@ -32,18 +32,17 @@ translate <- function(x,
                       workDir=NULL){
   ### Loading of the nucleotide sequence(-s) of interest as an object of
   #   class DNAStringSet.
-  ##  Setting the work directory.
-  if (is.null(x=workDir)){
-    workDir <- getwd()
+  if (!is.null(x=workDir)){
+    seqs <- paste(workDir, x, sep="/")
   }
   ##  Retrieving the file extension.
   frt <- tools::file_ext(x=x)
   ##  Validation of file format.
   if (!frt %in% c("fa", "fasta")){
-    stop("Invalid file format")
+    message("Invalid file format")
+    return(NULL)
   }
   ##  Full path to the file.
-  seqs <- paste(workDir, x, sep="/")
   ##  Loading of the sequence(-s) of interest.
   seqs0 <- readDNAStringSet(filepath=seqs)
   seqs1 <- subseq(x=seqs0, start=2, end=width(x=seqs0))
@@ -54,7 +53,11 @@ translate <- function(x,
                                     "codon.table.txt",
                                     package="ORFhunteR")
   }else{
-    codon_table_path <- paste(workDir, codones, sep = "/")
+    if (!is.null(x=workDir)){
+      codon_table_path <- paste(workDir, codones, sep = "/")
+    } else{
+      codon_table_path <- codones
+    }
   }
   codon_table <- read.table(file=codon_table_path,
                             sep="\t",
