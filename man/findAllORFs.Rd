@@ -49,6 +49,7 @@ orf <- findAllORFs(x=tr, codStart="ATG", workDir=NULL)
 tr <- c("ACGCCTAGATGGTAGGGCCCATTTGCGAAGGACGAAGTGCCCAGTGAGTTAGCCAC",
         "GGGCCATGAGGGTAGCGCACATGGATGGACGATGTGCCCAGTGGGTTAGCCAC")
 orf <- findAllORFs(x=tr, codStart="ATG", workDir=NULL)
+### Input of R system file with test set of nucleotide sequences:
 tr <- system.file("extdata",
                   "Set.trans_sequences.fasta",
                   package="ORFhunteR")

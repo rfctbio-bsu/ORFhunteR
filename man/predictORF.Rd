@@ -2,13 +2,14 @@
 % Please edit documentation in R/predictORFs.r
 \name{predictORF}
 \alias{predictORF}
-\title{Predict the true ORFs in mRNA molecules}
+\title{Predict true open reading frames in mRNA molecule(-s)}
 \usage{
 predictORF(
   tr,
   genome = "BSgenome.Hsapiens.UCSC.hg38",
+  orf_length = 27,
   model = NULL,
-  prThr = 0.5,
+  prThr = 0.9,
   workDir = NULL
 )
 }
@@ -19,21 +20,24 @@ transcripts. Allowed file formats are "fasta", "fa", "gtf" or "gff".}
 \item{genome}{character string giving the name of BSgenome data package with
 full genome sequences. Default value is "BSgenome.Hsapiens.UCSC.hg38".}
 
+\item{orf_length}{minimal length of inferred open reading frame (in
+nucleotides, including stop codon). Default value is 27.}
+
 \item{model}{character string giving the connection or full path to the file
 from which the classification model is read. Use default NULL value to 
 use our default model.}
 
-\item{prThr}{probability threshold for the "winning" class of ORFs.
-Default value is 0.5.}
+\item{prThr}{probability threshold for the "winning" class of open reading
+frame. Default value is 0.9.}
 
 \item{workDir}{character string giving the path to and name of work
 directory. NULL by default that mean the current working directory.}
 }
 \value{
-The coordinates of ORFs in mRNA molecules of interest.
+coordinates of open reading frames in mRNA molecules of interest.
 }
 \description{
-Predict the true ORFs in mRNA molecules.
+Prediction of the true open reading frames in mRNA molecule(-s).
 }
 \examples{
 \dontrun{
@@ -45,5 +49,6 @@ ORFs <- predictORF(tr=tr_path, model=model)
 }
 }
 \author{
-Mikalai M. Yatskou
+Mikalai M. Yatskou, Vasily V. Grinev
+Last updated: August 19, 2024.
 }
