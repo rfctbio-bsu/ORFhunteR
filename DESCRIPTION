@@ -37,5 +37,5 @@ Imports: Rcpp (>= 1.0.3), BSgenome.Hsapiens.UCSC.hg38,
 Depends: Biostrings, rtracklayer, Peptides
 LinkingTo: Rcpp
 Suggests: knitr, BiocStyle, rmarkdown
-VignetteBuilder:  knitr
-RoxygenNote: 7.1.1.9000
+VignetteBuilder: knitr
+RoxygenNote: 7.3.2
